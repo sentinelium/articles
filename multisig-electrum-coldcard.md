@@ -41,6 +41,12 @@ Arman also provides two guides to generate your seed:
 - [Simple way](https://armantheparman.com/how-to-safely-generate-your-bitcoin-mnemonic-seed-phrases/)
 - [Hard way](https://armantheparman.com/bitcoin-seed-with-dice/)
 
+# Initiate ColdCard with the seed you created for it
+Since there will be one ColdCard in our setup, we need to store the corresponding seed there. That is, one of the three seeds you have created, will be stored exclusively in your ColdCard and you will use this device to sign transactions with that seed. So, pick one seed and import in in the ColdCard.
+
+ColdCard has an option for importing existing seeds; it's pretty straight forward and well documented, so go ahead and have a look here: 
+[Importing or Creating Private Keys](https://coldcard.com/docs/import)
+
 # Set up the airgapped laptop(s)
 For this guide, I am assuming that we will have three signing devices distributed geographically. Therefore we will need to set up two airgapped laptops plus one ColdCard. Later on, we shall transport each device to the desired location.
 
@@ -78,7 +84,7 @@ wget https://download.electrum.org/4.1.5/Electrum-4.1.5.tar.gz
 
 The dependency files and the package need to be transferred to our airgapped laptop. Hence, copy the downloaded `.tar.gz` file to a USB. Additionally, copy to the USB those new `.deb` files from the folder `/var/cache/apt/archives/`
 
-## Let's move now to the target airgapped laptop
+## Let's move now to the airgapped laptop
 Once the airgapped laptop has started, copy the files from the USB to a temporary folder in the desktop, for example.
 
 Now, copy all the `.deb` files to the `/var/cache/apt/archives/` folder. From the command line, it would look like this, just replace the correct value for your "origin folder".
@@ -89,18 +95,81 @@ Install the dependencies with this command:
 ```
 sudo dpkg -i *.deb
 ```
+Unpack Electrum in a folder of your choice. In Linux Mint, the graphical interface allows you to do this very easily. If you want to use the command line, copy the Electrum file in the folder of your choice and run this:
+```
+tar -xvf ElectrumFile.tar.gz
+```
+Once unzipped, you can run Electrum with the command:
+```
+./run_electrum
+```
 
+This process needs to be repeated in the second airgapped laptop, in order to get Electrum installed there. This will enable our airgapped laptops to be signing devices, each one with their own private key.
+
+# Obtain the master public keys from the seeds
+From one of the airgapped laptops we are going to create a temporary wallet with all three seeds in order to obtain the xpubs from all seeds. After this, we will delete that wallet.
+If you really want to avoid writing the three seeds in the same computer,then you'll have to take a few more steps and obtaining the xpub of each seed from their own signing device. I believe that the approach I explain here is reasonably secure and less cumbersome, but it's up to you.
+
+...
+
+![electrum 2 of 3 configuration](images/electrum-2of3.png)
+
+Select "I already have a seed".
+
+![electrum add cosigner](images/electrum-add-cosigner.png)
+
+Before entering your seed, click on Options and select "BIP39 seed".
+
+![electrum bip39 setting](images/electrum-bip39setting.png)
+
+After that, enter your seed in the designated text area.
+![enter seed text area](images/electrum-enter-seed.png)
+
+Repeat the same process for the other signatures, using the seeds you have generated. 
+
+In order to retrieve the master public keys for each key, go to Wallet > Information. In the dialog that opens, each of the "keystore" will show a different value in the "Master public key" area. 
+![keystores master public keys](images/electrum-masterkeys.png)
+Click on the three of them, and copy & paste all keys in a text file elsewhere. Keep the public keys safe and accessible to you, since they are fundamental to retrieve your wallet.
+
+Copy the file with the public keys to a USB, since we will need it later.
+
+Finally, delete the wallet from Electrum by clicking File > Delete.
+
+# Generate an export file from Electrum to import the wallet in ColdCard
+
+If we check the [ColdCard multisig docs](https://coldcard.com/docs/multisig), we see that Electrum generates a file with a particular format to be imported in ColdCard. 
+
+At the moment of writing, **I only managed to get Electrum to export such file for ColdCard if during the configuration of the wallet if I connected the hardware wallet via USB.** 
+
+We will refine it to match our configuration:
+```
+# Coldcard Multisig setup file (exported from 4369050F)
+#
+Name: MyMultisigWallet
+Policy: 2 of 3
+Format: P2WSH
+
+Derivation: m/48'/0'/0'/2'
+A7A0A635: Zpub74ksdfR3Vas...SKEid55
+
+Derivation: m/48'/0'/0'/2'
+5A17E17C: Zpub74BkEYFAUqNB2DT9jE...r4hirsvo3WFd5eHTxr
+
+Derivation: m/48'/0'/0'/2'
+493BAR8F: Zpub74uhWJw3wuBfXoxeWB4W...LLqeqRew1HW8EA1m37Uo4V
+```
 
 # Set up the Multisig wallet (watch-only) from the online laptop
-We need an online laptop for the following:
-- Set up the wallet structure and export it to the other devices.
-- Watch the movements of that wallet (check if transactions are going in and out).
-- Create unsigned transactions everytime we want to spend our coins from the multisig wallet.
+Let's move to the online laptop now. We need an online laptop for the following:
+- To set up the wallet structure and export it to the other devices.
+- To watch the movements of that wallet (check if transactions are going in and out).
+- To create unsigned transactions everytime we want to spend our coins from the multisig wallet (these unsigned txs need to be signed by at least 2 of the 3 airgapped devices and then broadcasted to the network)
 
 
 
 
 # Configuring the Multisig wallet in the ColdCard
+Import the wallet description file we generated from Electrum
 
 There is an option to "trust public keys" in a msig tx
 
