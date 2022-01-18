@@ -24,7 +24,7 @@ My instructions draw a lot from those two, so if you don't mind to connect  a Co
 Without further ado, let's start.
 
 # Create three seeds
-As you know by now, a mnemonic seed is a  human-readable representation of a private key. In our multisig set up, 2 of 3, we need to generate three seeds. In the future, we will only two of them to spend bitcoin from this wallet.
+As you know by now, a mnemonic seed is a  human-readable representation of a private key. In our multisig set up, 2 of 3, we need to generate three seeds. In the future, we will only use two of them to spend bitcoin from this wallet.
 
 To achieve the generation in a secure way, there are many tutorials and methods. 
 I particularly like the 'diceware' method developed by taelfrinn here:  
@@ -48,15 +48,48 @@ In another very comprehensive guide, Arman explains [how to create an airgapped 
 
 In my case, since I had a couple of old laptops I was not using any longer, I decided to repurpose them as airgapped signing devices.
 
+There are a variety of distributions to choose from, but I went for the 
+[Linux Mint](https://linuxmint.com/) one, since it offers some a version for equipments with low resources, such as my old laptops. By the way, you can try installing Linux Mint in a bootable USB and try it; if you like it, you can later on install it in the computer.
 
-[Linux Mint distribution](https://linuxmint.com/)  
-
-You will have to install Electrum here from an online computer. Arman also describes that in this guide, but I will go ahead and summarize it here:
-...
 # Install Electrum in the airgapped laptop(s)
 
-You will have to install Electrum here from an online computer. Arman also describes that in this guide, but I will go ahead and summarize it here:
-...
+You will have to install Electrum here from an online computer. Arman also describes that in [this guide](https://armantheparman.com/how-to-set-up-a-raspberry-pi-zero-air-gapped-with-electrum-desktop-wallet/), but I will go ahead and summarize it here:
+
+Get a bootable USB with Linux Mint in it and boot the online laptop. There, start Linux Mint and connect it to the Internet.
+
+Then, go to [Electrum's webpage](http://www.electrum.org/), to the download section and run in your console the command to install dependencies.
+
+![Electrum download page](images/electrum-download.png)
+
+While this can change in the future (always check their website), at the moment of writing this, you'll need to run this:
+
+```
+sudo apt-get install python3-pyqt5 libsecp256k1-0 python3-cryptography
+```
+After this, you will see that a bunch of new `.deb` files have been created in the folder 
+```
+/var/cache/apt/archives/
+```
+
+Also, download the package with the `wget` command shown there:
+```
+wget https://download.electrum.org/4.1.5/Electrum-4.1.5.tar.gz
+```
+
+The dependency files and the package need to be transferred to our airgapped laptop. Hence, copy the downloaded `.tar.gz` file to a USB. Additionally, copy to the USB those new `.deb` files from the folder `/var/cache/apt/archives/`
+
+## Let's move now to the target airgapped laptop
+Once the airgapped laptop has started, copy the files from the USB to a temporary folder in the desktop, for example.
+
+Now, copy all the `.deb` files to the `/var/cache/apt/archives/` folder. From the command line, it would look like this, just replace the correct value for your "origin folder".
+```
+sudo cp <origin_folder>/*.deb /var/cache/apt/archives/
+```
+Install the dependencies with this command:
+```
+sudo dpkg -i *.deb
+```
+
 
 # Set up the Multisig wallet (watch-only) from the online laptop
 We need an online laptop for the following:
