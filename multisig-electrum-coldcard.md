@@ -110,7 +110,16 @@ This process needs to be repeated in the second airgapped laptop, in order to ge
 From one of the airgapped laptops we are going to create a temporary wallet with all three seeds in order to obtain the xpubs from all seeds. After this, we will delete that wallet.
 If you really want to avoid writing the three seeds in the same computer,then you'll have to take a few more steps and obtaining the xpub of each seed from their own signing device. I believe that the approach I explain here is reasonably secure and less cumbersome, but it's up to you.
 
-...
+Anyway, let's start.  
+Open Electrum and go to File > New/Restore. There, select a name for this wallet and click on Next.
+
+![electrum new temp wallet](images/electrum-tempmultisig.png)
+
+Then, choose Multi-signature wallet.
+
+![electrum new multisig](images/electrum-newmultisig.png)
+
+After that, select the structure of your multisig wallet. As we said before, it will be "From 3 cosigners", "Require 2 signatures".
 
 ![electrum 2 of 3 configuration](images/electrum-2of3.png)
 
@@ -131,7 +140,7 @@ In order to retrieve the master public keys for each key, go to Wallet > Informa
 ![keystores master public keys](images/electrum-masterkeys.png)
 Click on the three of them, and copy & paste all keys in a text file elsewhere. Keep the public keys safe and accessible to you, since they are fundamental to retrieve your wallet.
 
-Copy the file with the public keys to a USB, since we will need it later.
+Copy the text file with the public keys to a USB, since we will need it later.
 
 Finally, delete the wallet from Electrum by clicking File > Delete.
 
