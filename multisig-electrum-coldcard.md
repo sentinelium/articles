@@ -132,6 +132,7 @@ Before entering your seed, click on Options and select "BIP39 seed".
 ![electrum bip39 setting](images/electrum-bip39setting.png)
 
 After that, enter your seed in the designated text area.
+
 ![enter seed text area](images/electrum-enter-seed.png)
 
 Repeat the same process for the other signatures, using the seeds you have generated. 
@@ -152,7 +153,7 @@ At the moment of writing, **I only managed to get Electrum to export such file f
 
 We will refine it to match our configuration:
 ```
-# Coldcard Multisig setup file (exported from 4369050F)
+# Coldcard Multisig setup file
 #
 Name: MyMultisigWallet
 Policy: 2 of 3
@@ -168,12 +169,6 @@ Derivation: m/48'/0'/0'/2'
 493BAR8F: Zpub74uhWJw3wuBfXoxeWB4W...LLqeqRew1HW8EA1m37Uo4V
 ```
 
-# Set up the Multisig wallet (watch-only) from the online laptop
-Let's move to the online laptop now. We need an online laptop for the following:
-- To set up the wallet structure and export it to the other devices.
-- To watch the movements of that wallet (check if transactions are going in and out).
-- To create unsigned transactions everytime we want to spend our coins from the multisig wallet (these unsigned txs need to be signed by at least 2 of the 3 airgapped devices and then broadcasted to the network)
-
 
 
 
@@ -181,6 +176,18 @@ Let's move to the online laptop now. We need an online laptop for the following:
 Import the wallet description file we generated from Electrum
 
 There is an option to "trust public keys" in a msig tx
+
+# Set up the Multisig wallet (watch-only) from the online laptop
+Let's move to the online laptop now. We need an online laptop for the following:
+- To set up the wallet structure and export it to the other devices.
+- To watch the movements of that wallet (check if transactions are going in and out).
+- To create unsigned transactions everytime we want to spend our coins from the multisig wallet (these unsigned txs need to be signed by at least 2 of the 3 airgapped devices and then broadcasted to the network)
+
+This process is rather straightforward. We follow the steps to create a new 2-of-3 multi-signature wallet in Electrum. However, for each cosigner, we select the option to "Use a master key" and use the public key we had stored in a text file before.
+
+![readonly wallet](images/electrum-readonly.png)
+
+When we are done, Electrum shows us our wallet, which can create unsigned transactions to be exported and signed later on in different devices.
 
 # Resources
 This guide was only possible after reading the very useful materials by ColdCard and Arman The Parman here:  
